@@ -8,6 +8,8 @@
 
 WAL 的全称是 Write-Ahead Logging，它的关键点就是先写日志，再写磁盘。
 
+![](https://github.com/liu-jianhao/geek_time/blob/main/MySQL%E5%AE%9E%E6%88%9845%E8%AE%B2/01-%E5%9F%BA%E7%A1%80%E7%AF%87/image/wal.png)
+
 具体来说，当有一条记录需要更新的时候，InnoDB 引擎就会先把记录写到 redo log 里面，并更新内存，这个时候更新就算完成了。同时，InnoDB 引擎会在适当的时候，将这个操作记录更新到磁盘里面，而这个更新往往是在系统比较空闲的时候做。
 
 InnoDB 的 redo log 是固定大小的，比如可以配置为一组 4 个文件，每个文件的大小是 1GB，那么这块“粉板”总共就可以记录 4GB 的操作。从头开始写，写到末尾就又回到开头循环写，如下面这个图所示。
@@ -46,6 +48,7 @@ write pos 和 checkpoint 之间的是“粉板”上还空着的部分，可以�
 
 这里我给出这个 update 语句的执行流程图，图中浅色框表示是在 InnoDB 内部执行的，深色框表示是在执行器中执行的。
 
+![](https://github.com/liu-jianhao/geek_time/blob/main/MySQL%E5%AE%9E%E6%88%9845%E8%AE%B2/01-%E5%9F%BA%E7%A1%80%E7%AF%87/image/update%E8%AF%AD%E5%8F%A5%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B.png)
 
 
 最后三步看上去有点“绕”，将 redo log 的写入拆成了两个步骤：prepare 和 commit，这就是"两阶段提交"。
